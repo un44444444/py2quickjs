@@ -1,14 +1,17 @@
 [![CircleCI](https://circleci.com/gh/PetterS/quickjs.svg?style=svg)](https://circleci.com/gh/PetterS/quickjs) [![PyPI version fury.io](https://badge.fury.io/py/quickjs.svg)](https://pypi.python.org/pypi/quickjs/)
 
-Just install with
+this repo is backport of Python 2.7
+```
+	pip install py2quickjs
+```
 
+For modern version Python 3.7 and later, see [quickjs](https://github.com/PetterS/quickjs)
+```
 	pip install quickjs
+```
 
 Binaries are provided for:
- - 1.19.2 and later: Python 3.7-3.10, 64-bit for Windows, macOS and GNU/Linux.
- - 1.18.0-1.19.1: None.
- - 1.5.1–1.17.0: Python 3.9, 64-bit for Windows.
- - 1.5.0 and earlier: Python 3.7, 64-bit for Windows.
+ - 2.7.18 and earlier: Python 2.7, 64-bit for Windows.
 
 # Usage
 
@@ -50,3 +53,19 @@ For full functionality, please see `test_quickjs.py`
 This project uses a git submodule for the upstream code, so clone it with the `--recurse-submodules` option or run `git submodule update --init --recursive` afterwards.
 
 Use a `poetry shell` and `make test` should work from inside its virtual environment.
+
+Problem fixing:
+- backport of the concurrent.futures standard library module to Python 2
+  - `pip install futures`
+  - https://github.com/agronholm/pythonfutures
+- [Extract a python str with C API, compatible with python 2&3](https://stackoverflow.com/questions/38595200/extract-a-python-str-with-c-api-compatible-with-python-23)
+```python
+PyObject *s;
+if( PyUnicode_Check(py_val) ) {  // python3 has unicode, but we convert to bytes
+    s = PyUnicode_AsUTF8String(py_val);
+} else if( PyBytes_Check(py_val) ) {  // python2 has bytes already
+    s = PyObject_Bytes(py_val);
+} else {
+    // Not a string => Error, warning ...
+}
+```

@@ -1,3 +1,4 @@
+#coding=utf-8
 import concurrent.futures
 import gc
 import json
@@ -209,9 +210,9 @@ class CallIntoPython(unittest.TestCase):
 
     def test_python_function_no_slots(self):
         for i in range(2**16):
-            self.context.add_callable(f"a{i}", lambda i=i: i + 1)
+            self.context.add_callable("a%d" % i, lambda i=i: i + 1)
         self.assertEqual(self.context.eval("a0()"), 1)
-        self.assertEqual(self.context.eval(f"a{2**16 - 1}()"), 2**16)
+        self.assertEqual(self.context.eval("a%d()" % (2**16 - 1)), 2**16)
 
     def test_function_after_context_del(self):
         def make():
@@ -608,8 +609,8 @@ class JavascriptFeatures(unittest.TestCase):
 
     def test_bigint(self):
         context = quickjs.Context()
-        self.assertEqual(context.eval(f"BigInt('{10**100}')"), 10**100)
-        self.assertEqual(context.eval(f"BigInt('{-10**100}')"), -10**100)
+        self.assertEqual(context.eval("BigInt('%s')" % (10**100)), 10**100)
+        self.assertEqual(context.eval("BigInt('%s')" % (-10**100)), -10**100)
 
 class Threads(unittest.TestCase):
     def setUp(self):
@@ -673,3 +674,9 @@ class QuickJSContextInClass(unittest.TestCase):
         # frames. Passes with the 2021-03-27 release.
         qjs = QJS()
         self.assertEqual(qjs.interp.eval('2+2'), 4)
+
+
+if __name__ == "__main__":
+    if not hasattr(unittest.TestCase, 'assertRaisesRegex'):
+        setattr(unittest.TestCase, 'assertRaisesRegex', unittest.TestCase.assertRaisesRegexp)
+    unittest.main()

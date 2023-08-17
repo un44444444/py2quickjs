@@ -3,6 +3,9 @@
 
 #include "upstream-quickjs/quickjs.h"
 
+// python2 patch
+#include "python2patch.c"
+
 // Node of Python callable that the context needs to keep available.
 typedef struct PythonCallableNode PythonCallableNode;
 struct PythonCallableNode {
@@ -183,6 +186,10 @@ static int python_to_quickjs_possible(RuntimeData *runtime_data, PyObject *item)
 			return 0;
 		}
 		return 1;
+	} else if (PyInt_Check(item)) {
+		return 1;
+	} else if (PyBytes_Check(item)) {
+		return 1;
 	} else {
 		PyErr_Format(PyExc_TypeError,
 		             "Unsupported type when converting a Python object to quickjs: %s.",
@@ -217,6 +224,11 @@ static JSValueConst python_to_quickjs(RuntimeData *runtime_data, PyObject *item)
 		return JS_NewString(runtime_data->context, PyUnicode_AsUTF8(item));
 	} else if (PyObject_IsInstance(item, (PyObject *)&Object)) {
 		return JS_DupValue(runtime_data->context, ((ObjectData *)item)->object);
+	} else if (PyInt_Check(item)) {
+		long value = PyInt_AsLong(item);
+		return JS_MKVAL(JS_TAG_INT, value);
+	} else if (PyBytes_Check(item)) {
+		return JS_NewString(runtime_data->context, PyUnicode_AsUTF8(item));
 	} else {
 		// Can not happen if python_to_quickjs_possible passes.
 		return JS_UNDEFINED;
@@ -807,6 +819,8 @@ static PyTypeObject Context = {PyVarObject_HEAD_INIT(NULL, 0).tp_name = "_quickj
 static PyMethodDef myextension_methods[] = {{"test", (PyCFunction)test, METH_NOARGS, NULL},
                                             {NULL, NULL}};
 
+#if PY_MAJOR_VERSION == 2
+#else
 // Define the _quickjs module.
 static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
                                        "quickjs",
@@ -817,6 +831,7 @@ static struct PyModuleDef moduledef = {PyModuleDef_HEAD_INIT,
                                        NULL,
                                        NULL,
                                        NULL};
+#endif
 
 // This function runs when the module is first imported.
 PyMODINIT_FUNC PyInit__quickjs(void) {
@@ -827,7 +842,11 @@ PyMODINIT_FUNC PyInit__quickjs(void) {
 		return NULL;
 	}
 
+ #if PY_MAJOR_VERSION == 2
+	PyObject *module = Py_InitModule("_quickjs", myextension_methods);
+ #else
 	PyObject *module = PyModule_Create(&moduledef);
+ #endif
 	if (module == NULL) {
 		return NULL;
 	}
@@ -851,3 +870,10 @@ PyMODINIT_FUNC PyInit__quickjs(void) {
 	PyModule_AddObject(module, "StackOverflow", StackOverflow);
 	return module;
 }
+
+#if PY_MAJOR_VERSION == 2
+PyMODINIT_FUNC init_quickjs(void) {
+	// printf("init_quickjs()\n");
+	return PyInit__quickjs();
+}
+#endif

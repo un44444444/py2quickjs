@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "quickjs"
+name = "py2quickjs"
 version = "0"  # Version in setup.py is used for distributing.
 description = "Python wrapper around https://bellard.org/quickjs/"
-authors = ["Petter Strandmark"]
+authors = [""]
 
 [tool.poetry.dependencies]
-python = ">=3.6"
+python = ">=2.7"
 
 [tool.poetry.dev-dependencies]
 yapf = "*"

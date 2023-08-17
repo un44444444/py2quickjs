@@ -1,11 +1,10 @@
 import glob
 import sys
-from typing import List
 
 from setuptools import setup, Extension
 
 CONFIG_VERSION = open("upstream-quickjs/VERSION").read().strip()
-extra_link_args: List[str] = []
+extra_link_args = []
 
 if sys.platform == "win32":
     # To build for Windows:
@@ -50,7 +49,7 @@ def get_c_sources(include_headers=False):
 
 _quickjs = Extension(
     '_quickjs',
-    define_macros=[('CONFIG_VERSION', f'"{CONFIG_VERSION}"'), ('CONFIG_BIGNUM', None)],
+    define_macros=[('CONFIG_VERSION', '"%s"' % CONFIG_VERSION), ('CONFIG_BIGNUM', None)],
     # HACK.
     # See https://github.com/pypa/packaging-problems/issues/84.
     sources=get_c_sources(include_headers=("sdist" in sys.argv)),
@@ -69,12 +68,13 @@ to the same JS runtime comes from the same thead.
 
 setup(author="Petter Strandmark",
       author_email="petter.strandmark@gmail.com",
-      maintainer="Quentin Wenger",
-      maintainer_email="matpi@protonmail.ch",
-      name='quickjs',
-      url='https://github.com/PetterS/quickjs',
-      version='1.19.2',
+      maintainer="Stone C",
+      maintainer_email="un44444444@gmail.com",
+      name='py2quickjs',
+      url='https://github.com/un44444444/py2quickjs',
+      version='0.5.0',
       description='Wrapping the quickjs C library.',
       long_description=long_description,
       packages=["quickjs"],
+      python_requires='>=2.7, <3',
       ext_modules=[_quickjs])
