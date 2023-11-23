@@ -79,9 +79,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: actions/setup-python@v3
+      - uses: MatteoH2O1999/setup-python@v2
         with:
           python-version: ${{ matrix.py-version }}
+          cache: pip
       - uses: ./.github/actions/setup-poetry
         with:
           key-base: ${{ matrix.arch }}-py${{ matrix.py-version }}
@@ -107,9 +108,10 @@ jobs:
       - uses: ./.github/actions/setup-mingw
         with:
           key-base: ${{ matrix.arch }}-py${{ matrix.py-version }}
-      - uses: actions/setup-python@v3
+      - uses: MatteoH2O1999/setup-python@v2
         with:
           python-version: ${{ matrix.py-version }}
+          cache: pip
       - uses: ./.github/actions/setup-poetry
         with:
           key-base: ${{ matrix.arch }}-py${{ matrix.py-version }}
@@ -132,9 +134,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: actions/setup-python@v3
+      - uses: MatteoH2O1999/setup-python@v2
         with:
           python-version: ${{ fromJSON(needs.pass-env.outputs.py-versions-str)[0] }}
+          cache: pip
       - uses: ./.github/actions/setup-poetry
         with:
           key-base: source_linux-py${{ fromJSON(needs.pass-env.outputs.py-versions-str)[0] }}
@@ -156,9 +159,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - uses: actions/setup-python@v3
+      - uses: MatteoH2O1999/setup-python@v2
         with:
           python-version: ${{ fromJSON(needs.pass-env.outputs.py-versions-str)[0] }}
+          cache: pip
       - uses: actions/download-artifact@v2
         with:
           path: dist
