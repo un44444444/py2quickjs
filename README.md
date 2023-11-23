@@ -11,7 +11,8 @@ For modern version Python 3.7 and later, see [quickjs](https://github.com/Petter
 ```
 
 Binaries are provided for:
- - 2.7.18 and earlier: Python 2.7, 64-bit for Windows.
+ - 2.7.18 and earlier: Python 2.7, 32-bit for Windows.
+ - 2.7.18 and earlier: Python 2.7, 64-bit for Linux.
 
 # Usage
 
@@ -57,6 +58,10 @@ Use a `poetry shell` and `make test` should work from inside its virtual environ
 Build and distribuite:
 - `python setup.py sdist`
 - `python setup.py bdist_wheel`
+- `twine upload dist/*`
+
+Build linux and distribuite:
+- `python setup.py bdist_wheel --plat-name=manylinux1_x86_64`
 - `twine upload dist/*`
 
 Problem fixing:
