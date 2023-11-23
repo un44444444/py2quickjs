@@ -54,6 +54,11 @@ This project uses a git submodule for the upstream code, so clone it with the `-
 
 Use a `poetry shell` and `make test` should work from inside its virtual environment.
 
+Build and distribuite:
+- `python setup.py sdist`
+- `python setup.py bdist_wheel`
+- `twine upload dist/*`
+
 Problem fixing:
 - backport of the concurrent.futures standard library module to Python 2
   - `pip install futures`

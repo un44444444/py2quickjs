@@ -11,7 +11,11 @@ const char *PyUnicode_AsUTF8(PyObject *unicode) {
 		bytes = PyObject_Bytes(unicode);
 	}
 	else {
+#if Py_UNICODE_SIZE >= 4
+		bytes = PyUnicodeUCS4_AsUTF8String(unicode);
+#else
 		bytes = PyUnicodeUCS2_AsUTF8String(unicode);
+#endif
 	}
 	//
 	const char * result = NULL;
@@ -27,6 +31,9 @@ const char *PyUnicode_AsUTF8(PyObject *unicode) {
     #define Py_EXPORTED_SYMBOL __declspec(dllexport)
     #define Py_LOCAL_SYMBOL
 #else
+    #define Py_IMPORTED_SYMBOL
+    #define Py_EXPORTED_SYMBOL
+    #define Py_LOCAL_SYMBOL
 #endif
 
 #       if defined(__cplusplus)

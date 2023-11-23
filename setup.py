@@ -18,7 +18,10 @@ if sys.platform == "win32":
     distutils.cygwinccompiler.get_msvcr = lambda: [] 
     # Make sure that pthreads is linked statically, otherwise we run into problems
     # on computers where it is not installed.
+    extra_compile_args = ["-Werror=incompatible-pointer-types"]
     extra_link_args = ["-static"]
+elif sys.platform == "linux2":
+    extra_compile_args = ["-std=c99"]
 
 
 def get_c_sources(include_headers=False):
@@ -49,11 +52,11 @@ def get_c_sources(include_headers=False):
 
 _quickjs = Extension(
     '_quickjs',
-    define_macros=[('CONFIG_VERSION', '"%s"' % CONFIG_VERSION), ('CONFIG_BIGNUM', None)],
+    define_macros=[('_GNU_SOURCE', None), ('CONFIG_VERSION', '"%s"' % CONFIG_VERSION), ('CONFIG_BIGNUM', None)],
     # HACK.
     # See https://github.com/pypa/packaging-problems/issues/84.
     sources=get_c_sources(include_headers=("sdist" in sys.argv)),
-    extra_compile_args=["-Werror=incompatible-pointer-types"],
+    extra_compile_args=extra_compile_args,
     extra_link_args=extra_link_args)
 
 long_description = """
